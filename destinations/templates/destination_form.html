@@ -1,0 +1,30 @@
+{% extends 'destinations/base.html' %}
+
+{% block content %}
+<h1>{% if destination %}Edit{% else %}Add{% endif %} Destination</h1>
+<form method="POST">
+    {% csrf_token %}
+    <label for="place_name">Place Name:</label>
+    <input type="text" name="place_name" value="{{ destination.place_name }}" required>
+    
+    <label for="weather">Weather:</label>
+    <input type="text" name="weather" value="{{ destination.weather }}" required>
+
+    <label for="location">Location:</label>
+    <input type="text" name="location" value="{{ destination.location }}" required>
+
+    <label for="state">State:</label>
+    <input type="text" name="state" value="{{ destination.state }}" required>
+
+    <label for="district">District:</label>
+    <input type="text" name="district" value="{{ destination.district }}" required>
+
+    <label for="google_map_link">Google Map Link:</label>
+    <input type="url" name="google_map_link" value="{{ destination.google_map_link }}" required>
+
+    <label for="description">Description:</label>
+    <textarea name="description" required>{{ destination.description }}</textarea>
+
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
