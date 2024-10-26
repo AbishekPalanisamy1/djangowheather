@@ -5,8 +5,15 @@ from rest_framework.parsers import JSONParser
 from .models import Destination
 from .serializers import DestinationSerializer
 from rest_framework import viewsets
-
 from .serializers import DestinationSerializer
+from .models import Destination
+from django.contrib.auth import authenticate,login,logout
+from .forms import CustomUserForm
+from django.shortcuts import render,redirect
+from django.contrib import messages
+
+
+
 
 class DestinationViewSet(viewsets.ModelViewSet):
     queryset = Destination.objects.all()
@@ -64,11 +71,51 @@ def destination_detail(request, id):
         serializer = DestinationSerializer(destination)
         return JsonResponse(serializer.data, safe=False)
 
-from django.shortcuts import render
-from .models import Destination
+
+
+
+def register(request):
+    form=CustomUserForm()
+    if request.method=="POST":
+        form=CustomUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Register sucess")
+            return redirect('/login_page')
+        
+
+    return render(request,'register.html',{'form':form})
+
+
+
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('destination') 
+
+    if request.method == "POST":
+        name = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=name, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login Successfully")
+            return redirect('destination') 
+        else:
+            messages.error(request, "Invalid Credentials")
+            return redirect('login_page') 
+    return render(request, 'login.html')
+
 
 def destination(request):
     
     destinations = Destination.objects.all()
     
     return render(request, 'destination_list.html', {'destinations': destinations})
+
+
+
+def logout_page(request):
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request,'Logout sucessfully')
+    return redirect('/')

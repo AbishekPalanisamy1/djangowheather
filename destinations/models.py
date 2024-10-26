@@ -13,4 +13,6 @@ class Destination(models.Model):
         return self.place_name
     
     class Meta:
-        db_table='places'
+        db_table = 'places'
+
+
